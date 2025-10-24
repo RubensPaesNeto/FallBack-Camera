@@ -40,3 +40,6 @@ const erro = (error) => {//callback de error (falha para captura de localizacao)
     }
     console.log('Ocorreu um erro: ' + errorMessage)
 }
+capturarLocalizacao.addEventListener('click', ()=>{
+  navigator.geolocation.getCurrentPosition(sucesso, erro);
+})
