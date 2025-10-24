@@ -12,14 +12,28 @@ if ('serviceWorker' in navigator) {
   });
 }
 let posicaoInicial; //variavel para capturar a posicao
+let posicaoInput;
+
 const capturarLocalizacao = document.getElementById('localizacao');
 const latitude = document.getElementById('latitude');
 const longitude = document.getElementById('longitude');
+const iframe = document.getElementById('gmap_canvas');
+
+const latitudeInput = document.getElementById('latitudePassada')
+const longitudeInput = document.getElementById('longitudePassada')
+const iframeInput = document.getElementById('gmap_canvasInput')
 
 const sucesso = (posicao) => { //callback de sucesso para capturar a posicao
   posicaoInicial = posicao
   latitude.innerHTML = posicaoInicial.coords.latitude;
   longitude.innerHTML = posicaoInicial.coords.longitude;
+  iframe.src = `https://maps.google.com/maps?q=${posicaoInicial.coords.latitude},${posicaoInicial.coords.longitude}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+
+  posicaoInput = posicao
+  latitudeInput.innerHTML = posicaoInput.coords.latitudeInput;
+  longitudeInput.innerHTML = posicaoInput.coords.longitudeInput;
+  iframeInput.src = `https://maps.google.com/maps?q=${posicaoInput.coords.latitudeInput},${posicaoInput.coords.longitudeInput}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+
 }
 
 const erro = (error) => {//callback de error (falha para captura de localizacao)
