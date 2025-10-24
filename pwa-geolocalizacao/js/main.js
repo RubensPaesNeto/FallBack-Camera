@@ -22,6 +22,21 @@ const sucesso = (posicao) => { //callback de sucesso para capturar a posicao
   longitude.innerHTML = posicaoInicial.coords.longitude;
 }
 
-const erro = (error) => {/
-
+const erro = (error) => {//callback de error (falha para captura de localizacao)
+    let errorMessage;
+    switch(error.code){
+      case 0:
+        errorMessage = "Erro desconhecido"
+      break;
+      case 1:
+        errorMessage = "Permissão negada!"
+      break;
+      case 2:
+        errorMessage = "Captura de posição indisponivel!"
+      break;
+      case 3: 
+      errorMessage = "Tempo de solicitação excedido!"
+      break;
+    }
+    console.log('Ocorreu um erro: ' + errorMessage)
 }
