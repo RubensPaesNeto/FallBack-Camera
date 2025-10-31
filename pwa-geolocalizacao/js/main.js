@@ -1,59 +1,67 @@
-//registrando a service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      let reg;
-      reg = await navigator.serviceWorker.register('/sw.js', { type: "module" });
-
-      console.log('Service worker registrada! 😎', reg);
+      const reg = await navigator.serviceWorker.register('/sw.js', { type: "module" });
+      console.log('Service worker registrado! 😎', reg);
     } catch (err) {
-      console.log('😥 Service worker registro falhou: ', err);
+      console.log('😥 Falha ao registrar service worker: ', err);
     }
   });
 }
-let posicaoInicial; //variavel para capturar a posicao
-let posicaoInput;
 
+// Elementos da página
 const capturarLocalizacao = document.getElementById('localizacao');
 const latitude = document.getElementById('latitude');
 const longitude = document.getElementById('longitude');
 const iframe = document.getElementById('gmap_canvas');
 
-const latitudeInput = document.getElementById('latitudePassada')
-const longitudeInput = document.getElementById('longitudePassada')
-const iframeInput = document.getElementById('gmap_canvasInput')
+const latitudeInput = document.getElementById('latitudePassada');
+const longitudeInput = document.getElementById('longitudePassada');
+const iframeInput = document.getElementById('gmap_canvasInput');
 
-const sucesso = (posicao) => { //callback de sucesso para capturar a posicao
-  posicaoInicial = posicao
-  latitude.innerHTML = posicaoInicial.coords.latitude;
-  longitude.innerHTML = posicaoInicial.coords.longitude;
-  iframe.src = `https://maps.google.com/maps?q=${posicaoInicial.coords.latitude},${posicaoInicial.coords.longitude}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+// Função de sucesso da geolocalização
+const sucesso = (posicao) => {
+  const lat = posicao.coords.latitude;
+  const lon = posicao.coords.longitude;
 
-  posicaoInput = posicao
-  latitudeInput.innerHTML = posicaoInput.coords.latitudeInput;
-  longitudeInput.innerHTML = posicaoInput.coords.longitudeInput;
-  iframeInput.src = `https://maps.google.com/maps?q=${posicaoInput.coords.latitudeInput},${posicaoInput.coords.longitudeInput}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+  // Atualiza o primeiro mapa com a posição atual
+  latitude.innerHTML = lat;
+  longitude.innerHTML = lon;
+  iframe.src = `https://maps.google.com/maps?q=${lat},${lon}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
 
-}
+  // Atualiza o segundo mapa com base nos valores digitados (caso existam)
+  const latInput = latitudeInput.value.trim();
+  const lonInput = longitudeInput.value.trim();
 
-const erro = (error) => {//callback de error (falha para captura de localizacao)
-    let errorMessage;
-    switch(error.code){
-      case 0:
-        errorMessage = "Erro desconhecido"
+  if (latInput && lonInput) {
+    iframeInput.src = `https://maps.google.com/maps?q=${latInput},${lonInput}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+  } else {
+    // Se não houver valores digitados, limpa o mapa
+    iframeInput.src = "";
+  }
+};
+
+// Função de erro
+const erro = (error) => {
+  let errorMessage;
+  switch (error.code) {
+    case 0:
+      errorMessage = "Erro desconhecido";
       break;
-      case 1:
-        errorMessage = "Permissão negada!"
+    case 1:
+      errorMessage = "Permissão negada!";
       break;
-      case 2:
-        errorMessage = "Captura de posição indisponivel!"
+    case 2:
+      errorMessage = "Captura de posição indisponível!";
       break;
-      case 3: 
-      errorMessage = "Tempo de solicitação excedido!"
+    case 3:
+      errorMessage = "Tempo de solicitação excedido!";
       break;
-    }
-    console.log('Ocorreu um erro: ' + errorMessage)
-}
-capturarLocalizacao.addEventListener('click', ()=>{
+  }
+  console.log('Ocorreu um erro: ' + errorMessage);
+};
+
+// Ao clicar no botão
+capturarLocalizacao.addEventListener('click', () => {
   navigator.geolocation.getCurrentPosition(sucesso, erro);
-})
+});
